@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Gif Search</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Giphy Search</h1>
+        <div id="buttons-view"></div>
+        <br><br>
+        <form id="gif-form">
+            <label for="gif-input">Add a gif!</label>
+            <input type="text" id="gif-input">
+            <input id="add-gif" type="submit" value="Add a gif!">
+        </form>
+        <br><br>
+        <div id="gifs-view"></div>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script type="text/javascript">
+        var topics = ["puppies", "vampire diaries", "fitness"];
+    
+        function displayGif(){
+            var giphy = $(this).attr("data-name");
+            var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + giphy + "&api_key=vuigkhkcu8iHgWH1IIYhuO6YQbcA5Wp1";                  
+            $.ajax({
+            url: queryURL,
+            method: "GET"
+        }).then(function(response){
+            var results = response.data;
+            for (var i = 0; i < results.length; i++) {
+                var gifDiv = $("<div>");
+                var rating = results[i].rating;
+                var p = $("<p>").text("Rating: " + rating);
+                var personImage = $("<img>");
+                personImage.attr("src", results[i].images.fixed_height.url);
+                gifDiv.prepend(p);
+                gifDiv.prepend(personImage);
+                $("#gifs-view").prepend(gifDiv);
+                console.log(response);
+            }
+        });
+        }
+
+        function renderButtons(){
+            $("#buttons-view").empty();
+            for(var i = 0; i < topics.length; i++){
+                var a = $("<button>");
+                    a.addClass("gif");
+                    a.attr("data-name",topics[i]); 
+                    a.text(topics[i]);
+                    $("#buttons-view").append(a);
+            }
+        }
+
+        $("#add-gif").on("click", function(event){
+            event.preventDefault();
+            var gif = $("#gif-input").val().trim();
+            topics.push(gif);
+            console.log(topics);
+            renderButtons();
+        });
+
+        $(document).on("click", ".gif", displayGif);
+        renderButtons();
+        </script>
+    </div>
+</body>
+</html>
